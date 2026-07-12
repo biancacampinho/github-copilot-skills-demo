@@ -11,10 +11,12 @@ public class AppDbContext : DbContext, IAppDbContext
     {
     }
 
-    public DbSet<Utente> Utenti => Set<Utente>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Product> Products => Set<Product>();
     public DbSet<Price> Prices => Set<Price>();
-    public DbSet<Subscription> Subscriptions => Set<Subscription>();
     public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

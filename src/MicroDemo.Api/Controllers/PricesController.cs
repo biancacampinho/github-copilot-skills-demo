@@ -11,11 +11,11 @@ namespace MicroDemo.Api.Controllers;
 
 public class PricesController : ApiControllerBase
 {
-    /// <summary>Lista todos os preços.</summary>
+    /// <summary>Lista preços, com filtros opcionais por produto e estado.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<PriceDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] bool onlyActive = false)
-        => ToResponse(await Mediator.Send(new GetPricesQuery(onlyActive)));
+    public async Task<IActionResult> GetAll([FromQuery] Guid? productId = null, [FromQuery] bool onlyActive = false)
+        => ToResponse(await Mediator.Send(new GetPricesQuery(productId, onlyActive)));
 
     /// <summary>Obtém um preço pelo id.</summary>
     [HttpGet("{id:guid}")]
@@ -24,10 +24,11 @@ public class PricesController : ApiControllerBase
     public async Task<IActionResult> GetById(Guid id)
         => ToResponse(await Mediator.Send(new GetPriceByIdQuery(id)));
 
-    /// <summary>Cria um novo preço.</summary>
+    /// <summary>Cria um novo preço para um produto.</summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Create([FromBody] CreatePriceCommand command)
     {
         var result = await Mediator.Send(command);
@@ -52,7 +53,6 @@ public class PricesController : ApiControllerBase
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Delete(Guid id)
         => ToResponse(await Mediator.Send(new DeletePriceCommand(id)));
 }

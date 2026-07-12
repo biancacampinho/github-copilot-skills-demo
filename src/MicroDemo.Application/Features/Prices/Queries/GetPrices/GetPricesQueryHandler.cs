@@ -16,11 +16,14 @@ public class GetPricesQueryHandler : IRequestHandler<GetPricesQuery, Result<IRea
     {
         var query = _db.Prices.AsNoTracking();
 
+        if (request.ProductId is not null)
+            query = query.Where(p => p.ProductId == request.ProductId);
+
         if (request.OnlyActive)
             query = query.Where(p => p.IsActive);
 
         var prices = await query
-            .OrderBy(p => p.Amount)
+            .OrderByDescending(p => p.ValidFromUtc)
             .ToListAsync(cancellationToken);
 
         IReadOnlyList<PriceDto> dtos = prices.Select(p => p.ToDto()).ToList();

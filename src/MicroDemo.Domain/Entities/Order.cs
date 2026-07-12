@@ -4,16 +4,15 @@ using MicroDemo.Domain.Enums;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Pedido/cobrança gerado para um utente, tipicamente a partir de uma assinatura.
+/// Pedido de compra realizado por um <see cref="User"/>. Agrega um ou mais
+/// <see cref="OrderItem"/> e mantém o total calculado no momento da compra.
 /// </summary>
 public class Order : BaseEntity
 {
-    public Guid UtenteId { get; set; }
-    public Utente Utente { get; set; } = null!;
+    public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
 
-    public Guid? SubscriptionId { get; set; }
-    public Subscription? Subscription { get; set; }
-
+    /// <summary>Soma dos <see cref="OrderItem.LineTotal"/> no momento da compra.</summary>
     public decimal TotalAmount { get; set; }
 
     public string Currency { get; set; } = "EUR";
@@ -21,4 +20,7 @@ public class Order : BaseEntity
     public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
     public DateTime OrderDateUtc { get; set; } = DateTime.UtcNow;
+
+    // Navegação
+    public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 }

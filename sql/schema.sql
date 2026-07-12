@@ -1,15 +1,14 @@
 /* ============================================================================
    MicroDemo — schema.sql
-   Cria o banco de dados e todas as tabelas do domínio (SQL Server / T-SQL).
-   O schema espelha exatamente o modelo do EF Core (migration InitialCreate).
+   Cria o banco de dados e todas as tabelas do domínio de E-COMMERCE
+   (SQL Server / T-SQL). O schema espelha exatamente o modelo do EF Core
+   (migration InitialCreate).
 
    Ordem de criação respeita as dependências de FK:
-     Prices → Utenti → Subscriptions → Orders
+     Categories → Users → Products → Orders → Prices → OrderItems
 
    Enums são persistidos como INT:
-     BillingPeriod:      1=Monthly, 2=Quarterly, 3=Yearly
-     SubscriptionStatus: 1=Active,  2=Cancelled, 3=Expired
-     OrderStatus:        1=Pending, 2=Paid, 3=Failed, 4=Refunded
+     OrderStatus: 1=Pending, 2=Paid, 3=Shipped, 4=Delivered, 5=Cancelled
    ============================================================================ */
 
 IF DB_ID(N'MicroDemoDb') IS NULL
@@ -24,91 +23,123 @@ GO
 /* --------------------------------------------------------------------------
    Limpeza idempotente (drop na ordem inversa das dependências)
    -------------------------------------------------------------------------- */
-IF OBJECT_ID(N'[dbo].[Orders]', N'U')        IS NOT NULL DROP TABLE [dbo].[Orders];
-IF OBJECT_ID(N'[dbo].[Subscriptions]', N'U') IS NOT NULL DROP TABLE [dbo].[Subscriptions];
-IF OBJECT_ID(N'[dbo].[Utenti]', N'U')        IS NOT NULL DROP TABLE [dbo].[Utenti];
-IF OBJECT_ID(N'[dbo].[Prices]', N'U')        IS NOT NULL DROP TABLE [dbo].[Prices];
+IF OBJECT_ID(N'[dbo].[OrderItems]', N'U') IS NOT NULL DROP TABLE [dbo].[OrderItems];
+IF OBJECT_ID(N'[dbo].[Prices]', N'U')     IS NOT NULL DROP TABLE [dbo].[Prices];
+IF OBJECT_ID(N'[dbo].[Orders]', N'U')     IS NOT NULL DROP TABLE [dbo].[Orders];
+IF OBJECT_ID(N'[dbo].[Products]', N'U')   IS NOT NULL DROP TABLE [dbo].[Products];
+IF OBJECT_ID(N'[dbo].[Users]', N'U')      IS NOT NULL DROP TABLE [dbo].[Users];
+IF OBJECT_ID(N'[dbo].[Categories]', N'U') IS NOT NULL DROP TABLE [dbo].[Categories];
 GO
 
 /* --------------------------------------------------------------------------
-   Prices (planos/preços)
+   Categories (categorias de produtos)
    -------------------------------------------------------------------------- */
-CREATE TABLE [dbo].[Prices] (
-    [Id]            UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Prices] PRIMARY KEY,
-    [Name]          NVARCHAR(120)    NOT NULL,
-    [Description]   NVARCHAR(500)    NULL,
-    [Amount]        DECIMAL(18,2)    NOT NULL,
-    [Currency]      NCHAR(3)         NOT NULL,
-    [BillingPeriod] INT              NOT NULL,
-    [IsActive]      BIT              NOT NULL,
-    [CreatedAtUtc]  DATETIME2        NOT NULL,
-    [UpdatedAtUtc]  DATETIME2        NULL
+CREATE TABLE [dbo].[Categories] (
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Categories] PRIMARY KEY,
+    [Name]         NVARCHAR(120)    NOT NULL,
+    [Description]  NVARCHAR(500)    NULL,
+    [IsActive]     BIT              NOT NULL,
+    [CreatedAtUtc] DATETIME2        NOT NULL,
+    [UpdatedAtUtc] DATETIME2        NULL
 );
 GO
-CREATE INDEX [IX_Prices_Name] ON [dbo].[Prices] ([Name]);
+CREATE UNIQUE INDEX [IX_Categories_Name] ON [dbo].[Categories] ([Name]);
 GO
 
 /* --------------------------------------------------------------------------
-   Utenti (usuários/clientes) — pode ter um plano/preço padrão
+   Users (clientes/compradores)
    -------------------------------------------------------------------------- */
-CREATE TABLE [dbo].[Utenti] (
-    [Id]             UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Utenti] PRIMARY KEY,
-    [FullName]       NVARCHAR(150)    NOT NULL,
-    [Email]          NVARCHAR(256)    NOT NULL,
-    [PhoneNumber]    NVARCHAR(30)     NULL,
-    [IsActive]       BIT              NOT NULL,
-    [DefaultPriceId] UNIQUEIDENTIFIER NULL,
-    [CreatedAtUtc]   DATETIME2        NOT NULL,
-    [UpdatedAtUtc]   DATETIME2        NULL,
-    CONSTRAINT [FK_Utenti_Prices_DefaultPriceId]
-        FOREIGN KEY ([DefaultPriceId]) REFERENCES [dbo].[Prices] ([Id]) ON DELETE SET NULL
+CREATE TABLE [dbo].[Users] (
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Users] PRIMARY KEY,
+    [FullName]     NVARCHAR(150)    NOT NULL,
+    [Email]        NVARCHAR(256)    NOT NULL,
+    [PhoneNumber]  NVARCHAR(30)     NULL,
+    [IsActive]     BIT              NOT NULL,
+    [CreatedAtUtc] DATETIME2        NOT NULL,
+    [UpdatedAtUtc] DATETIME2        NULL
 );
 GO
-CREATE UNIQUE INDEX [IX_Utenti_Email]          ON [dbo].[Utenti] ([Email]);
-CREATE INDEX        [IX_Utenti_DefaultPriceId] ON [dbo].[Utenti] ([DefaultPriceId]);
+CREATE UNIQUE INDEX [IX_Users_Email] ON [dbo].[Users] ([Email]);
 GO
 
 /* --------------------------------------------------------------------------
-   Subscriptions (associação temporal Utente ↔ Price)
+   Products (produtos) — pertence a uma categoria
    -------------------------------------------------------------------------- */
-CREATE TABLE [dbo].[Subscriptions] (
-    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Subscriptions] PRIMARY KEY,
-    [UtenteId]     UNIQUEIDENTIFIER NOT NULL,
-    [PriceId]      UNIQUEIDENTIFIER NOT NULL,
-    [StartDateUtc] DATETIME2        NOT NULL,
-    [EndDateUtc]   DATETIME2        NULL,
-    [Status]       INT              NOT NULL,
+CREATE TABLE [dbo].[Products] (
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Products] PRIMARY KEY,
+    [Name]         NVARCHAR(150)    NOT NULL,
+    [Description]  NVARCHAR(1000)   NULL,
+    [Sku]          NVARCHAR(50)     NOT NULL,
+    [IsActive]     BIT              NOT NULL,
+    [CategoryId]   UNIQUEIDENTIFIER NOT NULL,
     [CreatedAtUtc] DATETIME2        NOT NULL,
     [UpdatedAtUtc] DATETIME2        NULL,
-    CONSTRAINT [FK_Subscriptions_Utenti_UtenteId]
-        FOREIGN KEY ([UtenteId]) REFERENCES [dbo].[Utenti] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Subscriptions_Prices_PriceId]
-        FOREIGN KEY ([PriceId]) REFERENCES [dbo].[Prices] ([Id]) ON DELETE NO ACTION
+    CONSTRAINT [FK_Products_Categories_CategoryId]
+        FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Categories] ([Id]) ON DELETE NO ACTION
 );
 GO
-CREATE INDEX [IX_Subscriptions_PriceId]         ON [dbo].[Subscriptions] ([PriceId]);
-CREATE INDEX [IX_Subscriptions_UtenteId_Status] ON [dbo].[Subscriptions] ([UtenteId], [Status]);
+CREATE UNIQUE INDEX [IX_Products_Sku]        ON [dbo].[Products] ([Sku]);
+CREATE INDEX        [IX_Products_CategoryId] ON [dbo].[Products] ([CategoryId]);
 GO
 
 /* --------------------------------------------------------------------------
-   Orders (pedidos/cobranças)
+   Orders (pedidos) — realizados por um utilizador
    -------------------------------------------------------------------------- */
 CREATE TABLE [dbo].[Orders] (
-    [Id]             UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Orders] PRIMARY KEY,
-    [UtenteId]       UNIQUEIDENTIFIER NOT NULL,
-    [SubscriptionId] UNIQUEIDENTIFIER NULL,
-    [TotalAmount]    DECIMAL(18,2)    NOT NULL,
-    [Currency]       NCHAR(3)         NOT NULL,
-    [Status]         INT              NOT NULL,
-    [OrderDateUtc]   DATETIME2        NOT NULL,
-    [CreatedAtUtc]   DATETIME2        NOT NULL,
-    [UpdatedAtUtc]   DATETIME2        NULL,
-    CONSTRAINT [FK_Orders_Utenti_UtenteId]
-        FOREIGN KEY ([UtenteId]) REFERENCES [dbo].[Utenti] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Orders_Subscriptions_SubscriptionId]
-        FOREIGN KEY ([SubscriptionId]) REFERENCES [dbo].[Subscriptions] ([Id]) ON DELETE SET NULL
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Orders] PRIMARY KEY,
+    [UserId]       UNIQUEIDENTIFIER NOT NULL,
+    [TotalAmount]  DECIMAL(18,2)    NOT NULL,
+    [Currency]     NCHAR(3)         NOT NULL,
+    [Status]       INT              NOT NULL,
+    [OrderDateUtc] DATETIME2        NOT NULL,
+    [CreatedAtUtc] DATETIME2        NOT NULL,
+    [UpdatedAtUtc] DATETIME2        NULL,
+    CONSTRAINT [FK_Orders_Users_UserId]
+        FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
 );
 GO
-CREATE INDEX [IX_Orders_UtenteId]       ON [dbo].[Orders] ([UtenteId]);
-CREATE INDEX [IX_Orders_SubscriptionId] ON [dbo].[Orders] ([SubscriptionId]);
+CREATE INDEX [IX_Orders_UserId] ON [dbo].[Orders] ([UserId]);
+GO
+
+/* --------------------------------------------------------------------------
+   Prices (histórico de preços de um produto)
+   -------------------------------------------------------------------------- */
+CREATE TABLE [dbo].[Prices] (
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_Prices] PRIMARY KEY,
+    [ProductId]    UNIQUEIDENTIFIER NOT NULL,
+    [Amount]       DECIMAL(18,2)    NOT NULL,
+    [Currency]     NCHAR(3)         NOT NULL,
+    [ValidFromUtc] DATETIME2        NOT NULL,
+    [IsActive]     BIT              NOT NULL,
+    [CreatedAtUtc] DATETIME2        NOT NULL,
+    [UpdatedAtUtc] DATETIME2        NULL,
+    CONSTRAINT [FK_Prices_Products_ProductId]
+        FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Products] ([Id]) ON DELETE CASCADE
+);
+GO
+CREATE INDEX [IX_Prices_ProductId_IsActive_ValidFromUtc]
+    ON [dbo].[Prices] ([ProductId], [IsActive], [ValidFromUtc]);
+GO
+
+/* --------------------------------------------------------------------------
+   OrderItems (linhas do pedido) — liga Product + Order, com snapshot do preço
+   -------------------------------------------------------------------------- */
+CREATE TABLE [dbo].[OrderItems] (
+    [Id]           UNIQUEIDENTIFIER NOT NULL CONSTRAINT [PK_OrderItems] PRIMARY KEY,
+    [OrderId]      UNIQUEIDENTIFIER NOT NULL,
+    [ProductId]    UNIQUEIDENTIFIER NOT NULL,
+    [Quantity]     INT              NOT NULL,
+    [UnitPrice]    DECIMAL(18,2)    NOT NULL,
+    [Currency]     NCHAR(3)         NOT NULL,
+    [LineTotal]    DECIMAL(18,2)    NOT NULL,
+    [CreatedAtUtc] DATETIME2        NOT NULL,
+    [UpdatedAtUtc] DATETIME2        NULL,
+    CONSTRAINT [FK_OrderItems_Orders_OrderId]
+        FOREIGN KEY ([OrderId]) REFERENCES [dbo].[Orders] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_OrderItems_Products_ProductId]
+        FOREIGN KEY ([ProductId]) REFERENCES [dbo].[Products] ([Id]) ON DELETE NO ACTION
+);
+GO
+CREATE INDEX [IX_OrderItems_OrderId]   ON [dbo].[OrderItems] ([OrderId]);
+CREATE INDEX [IX_OrderItems_ProductId] ON [dbo].[OrderItems] ([ProductId]);
 GO

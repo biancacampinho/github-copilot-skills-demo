@@ -9,10 +9,12 @@ namespace MicroDemo.Application.Common.Interfaces;
 /// </summary>
 public interface IAppDbContext
 {
-    DbSet<Utente> Utenti { get; }
+    DbSet<User> Users { get; }
+    DbSet<Category> Categories { get; }
+    DbSet<Product> Products { get; }
     DbSet<Price> Prices { get; }
-    DbSet<Subscription> Subscriptions { get; }
     DbSet<Order> Orders { get; }
+    DbSet<OrderItem> OrderItems { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

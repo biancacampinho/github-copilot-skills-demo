@@ -23,11 +23,9 @@ public class UpdatePriceCommandHandler : IRequestHandler<UpdatePriceCommand, Res
         if (price is null)
             return Result.NotFound($"Price {request.Id} não encontrado.");
 
-        price.Name = request.Name;
-        price.Description = request.Description;
         price.Amount = request.Amount;
         price.Currency = request.Currency.ToUpperInvariant();
-        price.BillingPeriod = request.BillingPeriod;
+        price.ValidFromUtc = request.ValidFromUtc;
         price.IsActive = request.IsActive;
         price.UpdatedAtUtc = DateTime.UtcNow;
 

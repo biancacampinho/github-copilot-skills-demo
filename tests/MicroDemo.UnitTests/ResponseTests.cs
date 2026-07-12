@@ -1,7 +1,6 @@
 using FluentAssertions;
 using MicroDemo.Application.Common.Models;
-using MicroDemo.Application.Features.Prices.Dtos;
-using MicroDemo.Domain.Enums;
+using MicroDemo.Application.Features.Products.Dtos;
 using Xunit;
 
 namespace MicroDemo.UnitTests;
@@ -15,15 +14,13 @@ namespace MicroDemo.UnitTests;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// <summary>Builders de respostas/DTO esperados.</summary>
-public static class PriceResponses
+public static class ProductResponses
 {
-    public static PriceDto Expected() => new()
+    public static ProductDto Expected() => new()
     {
-        Name = "Plano Pro",
-        Description = "Plano profissional mensal",
-        Amount = 29.90m,
-        Currency = "EUR",
-        BillingPeriod = BillingPeriod.Monthly,
+        Name = "Auscultadores Bluetooth",
+        Description = "Auscultadores over-ear com cancelamento de ruído",
+        Sku = "SKU-HEADPHONE-001",
         IsActive = true
     };
 }
@@ -48,11 +45,11 @@ public static class ResultAssertions
 public class ResponseBuildersSmokeTests
 {
     [Fact]
-    public void PriceResponses_Expected_matches_valid_request_shape()
+    public void ProductResponses_Expected_matches_valid_request_shape()
     {
-        var expected = PriceResponses.Expected();
-        expected.Currency.Should().Be("EUR");
-        expected.Amount.Should().Be(29.90m);
+        var expected = ProductResponses.Expected();
+        expected.Sku.Should().Be("SKU-HEADPHONE-001");
+        expected.IsActive.Should().BeTrue();
     }
 
     [Fact]

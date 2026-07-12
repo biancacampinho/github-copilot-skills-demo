@@ -19,18 +19,12 @@ public class DeletePriceCommandHandler : IRequestHandler<DeletePriceCommand, Res
 
     public async Task<Result> Handle(DeletePriceCommand request, CancellationToken cancellationToken)
     {
-        var price = await _db.Prices
-            .Include(p => p.Subscriptions)
-            .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
-
+        var price = await _db.Prices.FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
         if (price is null)
             return Result.NotFound($"Price {request.Id} não encontrado.");
 
-        if (price.Subscriptions.Any())
-            return Result.Failure(
-                "Não é possível excluir um preço com assinaturas associadas.",
-                ResultErrorType.Conflict);
-
+        // Preços fazem parte do histórico e não são referenciados por FK a partir de
+        // OrderItem (que guarda um snapshot do valor), pelo que a remoção é segura.
         _db.Prices.Remove(price);
         await _db.SaveChangesAsync(cancellationToken);
 

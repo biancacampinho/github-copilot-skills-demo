@@ -15,14 +15,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Currency).IsRequired().HasMaxLength(3).IsFixedLength();
         builder.Property(o => o.Status).HasConversion<int>();
 
-        builder.HasOne(o => o.Utente)
-            .WithMany(u => u.Orders)
-            .HasForeignKey(o => o.UtenteId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(o => o.UserId);
 
-        builder.HasOne(o => o.Subscription)
-            .WithMany()
-            .HasForeignKey(o => o.SubscriptionId)
-            .OnDelete(DeleteBehavior.SetNull);
+        builder.HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

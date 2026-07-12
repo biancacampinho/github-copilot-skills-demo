@@ -1,10 +1,11 @@
 namespace MicroDemo.Domain.Enums;
 
-/// <summary>Estado de um pedido/cobrança.</summary>
+/// <summary>Estado do ciclo de vida de um pedido (order) de e-commerce.</summary>
 public enum OrderStatus
 {
     Pending = 1,
     Paid = 2,
-    Failed = 3,
-    Refunded = 4
+    Shipped = 3,
+    Delivered = 4,
+    Cancelled = 5
 }
