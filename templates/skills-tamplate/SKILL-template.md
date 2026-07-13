@@ -34,6 +34,9 @@ Ex: "You are a technical documentarian. Your only job is X, never Y." -->
 Ex: a stronger-reasoning model for deep analysis,
 a faster model for simple, repetitive tasks. -->
 
+### WHAT NOT TO DO
+
+
 ### OUTPUT
 <!-- Where the result is saved, in what format, and the file naming convention.
 Ex: `docs/<type>/YYYY-MM-DD-description.md` -->
