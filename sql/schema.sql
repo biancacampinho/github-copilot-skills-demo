@@ -1,5 +1,5 @@
 /* ============================================================================
-   MicroDemo — schema.sql
+   SkillGhcDemo — schema.sql
    Cria o banco de dados e todas as tabelas do domínio de E-COMMERCE
    (SQL Server / T-SQL). O schema espelha exatamente o modelo do EF Core
    (migration InitialCreate).
@@ -11,13 +11,13 @@
      OrderStatus: 1=Pending, 2=Paid, 3=Shipped, 4=Delivered, 5=Cancelled
    ============================================================================ */
 
-IF DB_ID(N'MicroDemoDb') IS NULL
+IF DB_ID(N'SkillGhcDemoDb') IS NULL
 BEGIN
-    CREATE DATABASE [MicroDemoDb];
+    CREATE DATABASE [SkillGhcDemoDb];
 END;
 GO
 
-USE [MicroDemoDb];
+USE [SkillGhcDemoDb];
 GO
 
 /* --------------------------------------------------------------------------

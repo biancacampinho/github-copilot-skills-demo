@@ -1,5 +1,5 @@
 /* ============================================================================
-   MicroDemo — seed.sql
+   SkillGhcDemo — seed.sql
    Dados de exemplo realistas de E-COMMERCE. Execute APÓS schema.sql.
    Usa GUIDs fixos para permitir reexecução determinística e referências entre
    tabelas. É idempotente: apaga os registros conhecidos antes de reinserir.
@@ -8,7 +8,7 @@
      OrderStatus: 1=Pending, 2=Paid, 3=Shipped, 4=Delivered, 5=Cancelled
    ============================================================================ */
 
-USE [MicroDemoDb];
+USE [SkillGhcDemoDb];
 GO
 
 /* Limpeza (ordem inversa das FKs) ------------------------------------------ */
