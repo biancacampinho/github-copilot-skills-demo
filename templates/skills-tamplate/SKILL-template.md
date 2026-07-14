@@ -35,7 +35,8 @@ Ex: a stronger-reasoning model for deep analysis,
 a faster model for simple, repetitive tasks. -->
 
 ### WHAT NOT TO DO
-
+<!-- The DON'TS: explicit boundaries/anti-goals for this skill.
+Ex: "Do NOT commit or push any code to the branch", "Do NOT modify files outside <path>." -->
 
 ### OUTPUT
 <!-- Where the result is saved, in what format, and the file naming convention.
