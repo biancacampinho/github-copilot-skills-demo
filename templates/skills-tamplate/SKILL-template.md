@@ -11,7 +11,9 @@ FIXED SKELETON (keep these headers in every skill):
   GENERAL
     - YOUR ROLE
     - MODEL TO EXECUTE THE SKILL
+    - WHAT NOT TO DO
     - OUTPUT
+    - OPEN QUESTIONS
   STEPS TO FOLLOW
   RULES
 
@@ -41,6 +43,14 @@ Ex: "Do NOT commit or push any code to the branch", "Do NOT modify files outside
 ### OUTPUT
 <!-- Where the result is saved, in what format, and the file naming convention.
 Ex: `docs/<type>/YYYY-MM-DD-description.md` -->
+
+### OPEN QUESTIONS
+<!-- How and when to surface ambiguities/gaps to the user instead of guessing,
+and how/where to present them.
+Ex: "If the requested behavior is ambiguous, or coverage seems to require
+touching <path>, or a needed pattern/shape is unclear, ask the user before
+proceeding rather than guessing."
+Ex: "At the END of every response, list any Open Questions (or 'None.')." -->
 
 ---
 
