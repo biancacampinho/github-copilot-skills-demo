@@ -23,7 +23,7 @@ This research task benefits from strong reasoning to decompose the question and 
 - If no such option is available, or the user prefers to continue as-is, proceed with the current model — do not block the research on this.
 
 ### OUTPUT
-- All research output goes to `thoughts/research/` in the current repository
+- All research output goes to `thoughts/research/` in the current repository.If the folder doesn't exist, please create it.
 - Filename format: `YYYY-MM-DD-research-<repo-name>.md` , where `<repo-name>` is the repository name that you are doing the research
 
 ---
