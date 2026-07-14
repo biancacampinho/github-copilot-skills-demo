@@ -3,9 +3,9 @@ using MicroDemo.Domain.Common;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Preço de um <see cref="Product"/>. Modelado como histórico (1:N com Product):
-/// vários registos ao longo do tempo, sendo o preço "corrente" o ativo com o
-/// <see cref="ValidFromUtc"/> mais recente.
+/// Price of a <see cref="Product"/>. Modeled as a history (1:N with Product):
+/// multiple records over time, where the "current" price is the active one with the
+/// most recent <see cref="ValidFromUtc"/>.
 /// </summary>
 public class Price : BaseEntity
 {
@@ -14,12 +14,12 @@ public class Price : BaseEntity
 
     public decimal Amount { get; set; }
 
-    /// <summary>Código ISO-4217 (ex.: "EUR", "BRL", "USD").</summary>
+    /// <summary>ISO-4217 code (e.g., "EUR", "BRL", "USD").</summary>
     public string Currency { get; set; } = "EUR";
 
-    /// <summary>A partir de quando este preço passa a valer.</summary>
+    /// <summary>The point in time from which this price takes effect.</summary>
     public DateTime ValidFromUtc { get; set; } = DateTime.UtcNow;
 
-    /// <summary>Indica se este é um preço atualmente em vigor (não descontinuado).</summary>
+    /// <summary>Indicates whether this is a currently effective price (not discontinued).</summary>
     public bool IsActive { get; set; } = true;
 }

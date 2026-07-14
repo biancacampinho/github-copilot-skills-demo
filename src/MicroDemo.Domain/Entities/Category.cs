@@ -3,7 +3,7 @@ using MicroDemo.Domain.Common;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Categoria de produtos (ex.: "Eletrónica", "Livros"). Um produto pertence a uma categoria.
+/// Product category (e.g., "Electronics", "Books"). A product belongs to one category.
 /// </summary>
 public class Category : BaseEntity
 {
@@ -13,6 +13,6 @@ public class Category : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
-    // Navegação
+    // Navigation
     public ICollection<Product> Products { get; set; } = new List<Product>();
 }

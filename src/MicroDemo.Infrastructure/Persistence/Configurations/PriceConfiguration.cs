@@ -14,7 +14,7 @@ public class PriceConfiguration : IEntityTypeConfiguration<Price>
         builder.Property(p => p.Amount).HasColumnType("decimal(18,2)");
         builder.Property(p => p.Currency).IsRequired().HasMaxLength(3).IsFixedLength();
 
-        // Índice para resolver rapidamente o preço corrente de um produto.
+        // Index to quickly resolve the current price of a product.
         builder.HasIndex(p => new { p.ProductId, p.IsActive, p.ValidFromUtc });
     }
 }

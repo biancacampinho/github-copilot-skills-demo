@@ -1,6 +1,6 @@
 namespace MicroDemo.Domain.Enums;
 
-/// <summary>Estado do ciclo de vida de um pedido (order) de e-commerce.</summary>
+/// <summary>Lifecycle state of an e-commerce order.</summary>
 public enum OrderStatus
 {
     Pending = 1,

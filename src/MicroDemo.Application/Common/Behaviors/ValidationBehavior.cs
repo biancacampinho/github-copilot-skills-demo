@@ -5,8 +5,8 @@ using MicroDemo.Application.Common.Exceptions;
 namespace MicroDemo.Application.Common.Behaviors;
 
 /// <summary>
-/// Pipeline behavior do MediatR que executa todos os <see cref="IValidator{T}"/>
-/// registrados para o request antes de chegar ao handler.
+/// MediatR pipeline behavior that runs every <see cref="IValidator{T}"/>
+/// registered for the request before it reaches the handler.
 /// </summary>
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

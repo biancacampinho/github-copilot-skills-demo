@@ -1,17 +1,14 @@
 using MicroDemo.Api.Common;
-using MicroDemo.Application.Features.Products.Commands.CreateProduct;
-using MicroDemo.Application.Features.Products.Commands.DeleteProduct;
-using MicroDemo.Application.Features.Products.Commands.UpdateProduct;
-using MicroDemo.Application.Features.Products.Dtos;
-using MicroDemo.Application.Features.Products.Queries.GetProductById;
-using MicroDemo.Application.Features.Products.Queries.GetProducts;
+using MicroDemo.Application.Commands.Products;
+using MicroDemo.Application.Dtos;
+using MicroDemo.Application.Queries.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroDemo.Api.Controllers;
 
 public class ProductsController : ApiControllerBase
 {
-    /// <summary>Lista produtos, com filtros opcionais de texto, categoria e estado.</summary>
+    /// <summary>Lists products, with optional filters by text, category and status.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<ProductDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(
@@ -20,14 +17,14 @@ public class ProductsController : ApiControllerBase
         [FromQuery] bool onlyActive = false)
         => ToResponse(await Mediator.Send(new GetProductsQuery(search, categoryId, onlyActive)));
 
-    /// <summary>Obtém um produto pelo id.</summary>
+    /// <summary>Gets a product by id.</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
         => ToResponse(await Mediator.Send(new GetProductByIdQuery(id)));
 
-    /// <summary>Cria um novo produto.</summary>
+    /// <summary>Creates a new product.</summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -41,7 +38,7 @@ public class ProductsController : ApiControllerBase
             : ToResponse(result);
     }
 
-    /// <summary>Atualiza um produto existente.</summary>
+    /// <summary>Updates an existing product.</summary>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -49,12 +46,12 @@ public class ProductsController : ApiControllerBase
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command)
     {
         if (id != command.Id)
-            return BadRequest(new { error = "O id da rota difere do id do corpo." });
+            return BadRequest(new { error = "The route id differs from the body id." });
 
         return ToResponse(await Mediator.Send(command));
     }
 
-    /// <summary>Remove um produto.</summary>
+    /// <summary>Removes a product.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

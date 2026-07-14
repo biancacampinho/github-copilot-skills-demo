@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace MicroDemo.Application.Common.Interfaces;
 
 /// <summary>
-/// Abstração do DbContext exposta à camada de aplicação. Permite testar handlers
-/// sem depender diretamente da implementação concreta em Infrastructure.
+/// DbContext abstraction exposed to the application layer. Allows handlers to be
+/// tested without depending directly on the concrete implementation in Infrastructure.
 /// </summary>
 public interface IAppDbContext
 {

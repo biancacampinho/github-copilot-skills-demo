@@ -3,8 +3,8 @@ using MicroDemo.Domain.Common;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Produto vendável. Pertence a uma <see cref="Category"/> e possui um histórico
-/// de preços (<see cref="Price"/>). Aparece nos pedidos via <see cref="OrderItem"/>.
+/// A sellable product. Belongs to a <see cref="Category"/> and has a price
+/// history (<see cref="Price"/>). Appears in orders via <see cref="OrderItem"/>.
 /// </summary>
 public class Product : BaseEntity
 {
@@ -12,7 +12,7 @@ public class Product : BaseEntity
 
     public string? Description { get; set; }
 
-    /// <summary>Código único do produto (Stock Keeping Unit).</summary>
+    /// <summary>Unique product code (Stock Keeping Unit).</summary>
     public string Sku { get; set; } = string.Empty;
 
     public bool IsActive { get; set; } = true;
@@ -20,8 +20,8 @@ public class Product : BaseEntity
     public Guid CategoryId { get; set; }
     public Category Category { get; set; } = null!;
 
-    // Navegação
-    /// <summary>Histórico de preços do produto (o preço "corrente" é o ativo mais recente).</summary>
+    // Navigation
+    /// <summary>Price history of the product (the "current" price is the most recent active one).</summary>
     public ICollection<Price> Prices { get; set; } = new List<Price>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

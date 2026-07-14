@@ -1,30 +1,27 @@
 using MicroDemo.Api.Common;
-using MicroDemo.Application.Features.Users.Commands.CreateUser;
-using MicroDemo.Application.Features.Users.Commands.DeleteUser;
-using MicroDemo.Application.Features.Users.Commands.UpdateUser;
-using MicroDemo.Application.Features.Users.Dtos;
-using MicroDemo.Application.Features.Users.Queries.GetUserById;
-using MicroDemo.Application.Features.Users.Queries.GetUsers;
+using MicroDemo.Application.Commands.Users;
+using MicroDemo.Application.Dtos;
+using MicroDemo.Application.Queries.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroDemo.Api.Controllers;
 
 public class UsersController : ApiControllerBase
 {
-    /// <summary>Lista utilizadores, com filtro opcional de texto.</summary>
+    /// <summary>Lists users, with an optional text filter.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<UserDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] string? search = null, [FromQuery] bool onlyActive = false)
         => ToResponse(await Mediator.Send(new GetUsersQuery(search, onlyActive)));
 
-    /// <summary>Obtém um utilizador pelo id.</summary>
+    /// <summary>Gets a user by id.</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
         => ToResponse(await Mediator.Send(new GetUserByIdQuery(id)));
 
-    /// <summary>Cria um novo utilizador.</summary>
+    /// <summary>Creates a new user.</summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,19 +34,19 @@ public class UsersController : ApiControllerBase
             : ToResponse(result);
     }
 
-    /// <summary>Atualiza um utilizador existente.</summary>
+    /// <summary>Updates an existing user.</summary>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserCommand command)
     {
         if (id != command.Id)
-            return BadRequest(new { error = "O id da rota difere do id do corpo." });
+            return BadRequest(new { error = "The route id differs from the body id." });
 
         return ToResponse(await Mediator.Send(command));
     }
 
-    /// <summary>Remove um utilizador.</summary>
+    /// <summary>Removes a user.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

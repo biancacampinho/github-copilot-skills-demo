@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 namespace MicroDemo.Application.Common.Behaviors;
 
 /// <summary>
-/// Logging básico de request/response de cada mensagem que passa pelo MediatR.
+/// Basic request/response logging for every message that flows through MediatR.
 /// </summary>
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

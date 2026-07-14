@@ -1,14 +1,14 @@
 using MicroDemo.Api.Common;
-using MicroDemo.Application.Features.Orders.Commands.CreateOrder;
-using MicroDemo.Application.Features.Orders.Dtos;
-using MicroDemo.Application.Features.Orders.Queries.GetOrderById;
+using MicroDemo.Application.Commands.Orders;
+using MicroDemo.Application.Dtos;
+using MicroDemo.Application.Queries.Orders;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroDemo.Api.Controllers;
 
 public class OrdersController : ApiControllerBase
 {
-    /// <summary>Obtém um pedido pelo id (inclui as linhas).</summary>
+    /// <summary>Gets an order by id (includes its lines).</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -16,11 +16,11 @@ public class OrdersController : ApiControllerBase
         => ToResponse(await Mediator.Send(new GetOrderByIdQuery(id)));
 
     /// <summary>
-    /// ★ ENDPOINT RESERVADO PARA IMPLEMENTAÇÃO MANUAL (skill personalizada) ★
-    /// Cria um pedido para um utilizador, com múltiplos itens, fazendo o snapshot
-    /// do preço corrente de cada produto e calculando o total.
-    /// O endpoint e o pipeline já estão prontos; o handler
-    /// (CreateOrderCommandHandler) está como stub aguardando implementação.
+    /// ★ ENDPOINT RESERVED FOR MANUAL IMPLEMENTATION (custom skill) ★
+    /// Creates an order for a user, with multiple items, taking a snapshot
+    /// of the current price of each product and computing the total.
+    /// The endpoint and the pipeline are already in place; the handler
+    /// (CreateOrderCommandHandler) is a stub awaiting implementation.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]

@@ -1,30 +1,27 @@
 using MicroDemo.Api.Common;
-using MicroDemo.Application.Features.Prices.Commands.CreatePrice;
-using MicroDemo.Application.Features.Prices.Commands.DeletePrice;
-using MicroDemo.Application.Features.Prices.Commands.UpdatePrice;
-using MicroDemo.Application.Features.Prices.Dtos;
-using MicroDemo.Application.Features.Prices.Queries.GetPriceById;
-using MicroDemo.Application.Features.Prices.Queries.GetPrices;
+using MicroDemo.Application.Commands.Prices;
+using MicroDemo.Application.Dtos;
+using MicroDemo.Application.Queries.Prices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroDemo.Api.Controllers;
 
 public class PricesController : ApiControllerBase
 {
-    /// <summary>Lista preços, com filtros opcionais por produto e estado.</summary>
+    /// <summary>Lists prices, with optional filters by product and status.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<PriceDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] Guid? productId = null, [FromQuery] bool onlyActive = false)
         => ToResponse(await Mediator.Send(new GetPricesQuery(productId, onlyActive)));
 
-    /// <summary>Obtém um preço pelo id.</summary>
+    /// <summary>Gets a price by id.</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(PriceDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
         => ToResponse(await Mediator.Send(new GetPriceByIdQuery(id)));
 
-    /// <summary>Cria um novo preço para um produto.</summary>
+    /// <summary>Creates a new price for a product.</summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,19 +34,19 @@ public class PricesController : ApiControllerBase
             : ToResponse(result);
     }
 
-    /// <summary>Atualiza um preço existente.</summary>
+    /// <summary>Updates an existing price.</summary>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePriceCommand command)
     {
         if (id != command.Id)
-            return BadRequest(new { error = "O id da rota difere do id do corpo." });
+            return BadRequest(new { error = "The route id differs from the body id." });
 
         return ToResponse(await Mediator.Send(command));
     }
 
-    /// <summary>Remove um preço.</summary>
+    /// <summary>Removes a price.</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace MicroDemo.Application;
 
 /// <summary>
-/// Registro dos serviços da camada de Application (MediatR, FluentValidation, behaviors).
+/// Registration of the Application-layer services (MediatR, FluentValidation, behaviors).
 /// </summary>
 public static class DependencyInjection
 {
@@ -19,7 +19,7 @@ public static class DependencyInjection
 
         services.AddValidatorsFromAssembly(assembly);
 
-        // Ordem importa: logging externo, validação interna.
+        // Order matters: logging on the outside, validation on the inside.
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 

@@ -3,13 +3,13 @@ using FluentValidation.Results;
 namespace MicroDemo.Application.Common.Exceptions;
 
 /// <summary>
-/// Exceção de validação da aplicação. Encapsula as falhas do FluentValidation
-/// num formato simples consumido pelo middleware de tratamento de exceções da API.
+/// Application validation exception. Wraps FluentValidation failures
+/// in a simple format consumed by the API's exception-handling middleware.
 /// </summary>
 public class ValidationException : Exception
 {
     public ValidationException()
-        : base("Um ou mais erros de validação ocorreram.")
+        : base("One or more validation errors occurred.")
     {
         Errors = new Dictionary<string, string[]>();
     }
@@ -24,7 +24,7 @@ public class ValidationException : Exception
 
     public IDictionary<string, string[]> Errors { get; }
 
-    /// <summary>Achata todos os erros numa lista simples de mensagens.</summary>
+    /// <summary>Flattens all errors into a simple list of messages.</summary>
     public IEnumerable<string> FlattenedErrors =>
         Errors.SelectMany(kvp => kvp.Value.Select(msg => $"{kvp.Key}: {msg}"));
 }

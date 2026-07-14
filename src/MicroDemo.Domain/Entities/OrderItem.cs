@@ -3,9 +3,9 @@ using MicroDemo.Domain.Common;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Linha de um <see cref="Order"/>: liga um <see cref="Product"/> a um pedido, com a
-/// quantidade e um <b>snapshot</b> do preço unitário no momento da compra (para que
-/// alterações futuras do <see cref="Price"/> não afetem pedidos já realizados).
+/// Line of an <see cref="Order"/>: links a <see cref="Product"/> to an order, with the
+/// quantity and a <b>snapshot</b> of the unit price at the time of purchase (so that
+/// future changes to the <see cref="Price"/> do not affect orders already placed).
 /// </summary>
 public class OrderItem : BaseEntity
 {
@@ -17,11 +17,11 @@ public class OrderItem : BaseEntity
 
     public int Quantity { get; set; }
 
-    /// <summary>Snapshot do preço unitário no momento da compra.</summary>
+    /// <summary>Snapshot of the unit price at the time of purchase.</summary>
     public decimal UnitPrice { get; set; }
 
     public string Currency { get; set; } = "EUR";
 
-    /// <summary>Total da linha = <see cref="UnitPrice"/> × <see cref="Quantity"/>.</summary>
+    /// <summary>Line total = <see cref="UnitPrice"/> × <see cref="Quantity"/>.</summary>
     public decimal LineTotal { get; set; }
 }

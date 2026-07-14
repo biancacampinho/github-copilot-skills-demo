@@ -3,8 +3,8 @@ using MicroDemo.Domain.Common;
 namespace MicroDemo.Domain.Entities;
 
 /// <summary>
-/// Representa um utilizador (cliente/comprador) da loja. Pode ter um histórico
-/// de pedidos (<see cref="Order"/>).
+/// Represents a user (customer/buyer) of the store. Can have a history
+/// of orders (<see cref="Order"/>).
 /// </summary>
 public class User : BaseEntity
 {
@@ -16,6 +16,6 @@ public class User : BaseEntity
 
     public bool IsActive { get; set; } = true;
 
-    // Navegação
+    // Navigation
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

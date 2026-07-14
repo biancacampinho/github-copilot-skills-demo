@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace MicroDemo.Api.Common;
 
 /// <summary>
-/// Base para os controllers. Expõe o <see cref="ISender"/> do MediatR e converte
-/// o envelope <see cref="Result"/> em respostas HTTP consistentes.
+/// Base class for controllers. Exposes the MediatR <see cref="ISender"/> and converts
+/// the <see cref="Result"/> envelope into consistent HTTP responses.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -17,13 +17,13 @@ public abstract class ApiControllerBase : ControllerBase
     protected ISender Mediator =>
         _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
-    /// <summary>Converte um <see cref="Result{T}"/> em <see cref="IActionResult"/>.</summary>
+    /// <summary>Converts a <see cref="Result{T}"/> into an <see cref="IActionResult"/>.</summary>
     protected IActionResult ToResponse<T>(Result<T> result) =>
         result.Succeeded
             ? Ok(result.Data)
             : MapError(result);
 
-    /// <summary>Converte um <see cref="Result"/> (sem payload) em <see cref="IActionResult"/>.</summary>
+    /// <summary>Converts a <see cref="Result"/> (without payload) into an <see cref="IActionResult"/>.</summary>
     protected IActionResult ToResponse(Result result) =>
         result.Succeeded
             ? NoContent()

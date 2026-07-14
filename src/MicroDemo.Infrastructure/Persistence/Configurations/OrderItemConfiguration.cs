@@ -18,7 +18,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasIndex(oi => oi.OrderId);
         builder.HasIndex(oi => oi.ProductId);
 
-        // Relações Order (Cascade) e Product (Restrict) já configuradas em
-        // OrderConfiguration e ProductConfiguration respetivamente.
+        // Order (Cascade) and Product (Restrict) relationships are already configured in
+        // OrderConfiguration and ProductConfiguration respectively.
     }
 }

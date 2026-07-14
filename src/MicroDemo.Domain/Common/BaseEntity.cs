@@ -1,7 +1,7 @@
 namespace MicroDemo.Domain.Common;
 
 /// <summary>
-/// Base para todas as entidades do domínio. Fornece identidade e campos de auditoria.
+/// Base for all domain entities. Provides identity and audit fields.
 /// </summary>
 public abstract class BaseEntity
 {

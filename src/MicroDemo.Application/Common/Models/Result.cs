@@ -1,8 +1,8 @@
 namespace MicroDemo.Application.Common.Models;
 
 /// <summary>
-/// Envelope de resultado padronizado para todas as operações da camada de aplicação.
-/// Evita lançar exceções para fluxos de negócio esperados (ex.: "não encontrado").
+/// Standardized result envelope for all application-layer operations.
+/// Avoids throwing exceptions for expected business flows (e.g. "not found").
 /// </summary>
 public class Result
 {
@@ -10,7 +10,7 @@ public class Result
     public string? Error { get; init; }
     public IReadOnlyList<string> ValidationErrors { get; init; } = Array.Empty<string>();
 
-    /// <summary>Categoria do erro — usada pela API para mapear o status HTTP.</summary>
+    /// <summary>Error category — used by the API to map the HTTP status.</summary>
     public ResultErrorType ErrorType { get; init; } = ResultErrorType.None;
 
     public static Result Success() => new() { Succeeded = true };
@@ -25,13 +25,13 @@ public class Result
         new()
         {
             Succeeded = false,
-            Error = "Um ou mais erros de validação ocorreram.",
+            Error = "One or more validation errors occurred.",
             ValidationErrors = validationErrors.ToArray(),
             ErrorType = ResultErrorType.Validation
         };
 }
 
-/// <summary>Versão tipada de <see cref="Result"/> que carrega um payload.</summary>
+/// <summary>Typed version of <see cref="Result"/> that carries a payload.</summary>
 public class Result<T> : Result
 {
     public T? Data { get; init; }
@@ -48,7 +48,7 @@ public class Result<T> : Result
         new()
         {
             Succeeded = false,
-            Error = "Um ou mais erros de validação ocorreram.",
+            Error = "One or more validation errors occurred.",
             ValidationErrors = validationErrors.ToArray(),
             ErrorType = ResultErrorType.Validation
         };

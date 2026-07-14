@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace MicroDemo.UnitTests.Common;
 
 /// <summary>
-/// Fábrica de <see cref="AppDbContext"/> usando o provider InMemory do EF Core.
-/// Cada contexto recebe um nome de base único para garantir isolamento entre testes.
+/// Factory for <see cref="AppDbContext"/> using the EF Core InMemory provider.
+/// Each context gets a unique database name to guarantee isolation between tests.
 /// </summary>
 public static class TestDbContextFactory
 {

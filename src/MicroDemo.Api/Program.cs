@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Camadas ──────────────────────────────────────────────────────────────────
+// ── Layers ──────────────────────────────────────────────────────────────────
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    // Conveniência de DEV: aplica migrations automaticamente ao subir.
+    // DEV convenience: apply migrations automatically on startup.
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
@@ -44,5 +44,5 @@ app.MapControllers();
 
 app.Run();
 
-/// <summary>Exposto para permitir testes de integração via WebApplicationFactory.</summary>
+/// <summary>Exposed to allow integration tests via WebApplicationFactory.</summary>
 public partial class Program { }

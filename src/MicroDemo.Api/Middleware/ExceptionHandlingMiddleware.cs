@@ -5,9 +5,9 @@ using MicroDemo.Application.Common.Exceptions;
 namespace MicroDemo.Api.Middleware;
 
 /// <summary>
-/// Captura exceções não tratadas e as converte num payload JSON consistente.
-/// Trata especialmente a <see cref="ValidationException"/> lançada pelo
-/// ValidationBehavior do MediatR (→ HTTP 400).
+/// Captures unhandled exceptions and converts them into a consistent JSON payload.
+/// Specifically handles the <see cref="ValidationException"/> thrown by the
+/// MediatR ValidationBehavior (→ HTTP 400).
 /// </summary>
 public class ExceptionHandlingMiddleware
 {
@@ -28,7 +28,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (ValidationException ex)
         {
-            _logger.LogWarning("Falha de validação: {Errors}", string.Join("; ", ex.FlattenedErrors));
+            _logger.LogWarning("Validation failure: {Errors}", string.Join("; ", ex.FlattenedErrors));
             await WriteAsync(context, HttpStatusCode.BadRequest, new
             {
                 error = ex.Message,
@@ -37,10 +37,10 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro não tratado ao processar {Path}", context.Request.Path);
+            _logger.LogError(ex, "Unhandled error while processing {Path}", context.Request.Path);
             await WriteAsync(context, HttpStatusCode.InternalServerError, new
             {
-                error = "Ocorreu um erro inesperado."
+                error = "An unexpected error occurred."
             });
         }
     }
