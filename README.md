@@ -1,25 +1,25 @@
-# MicroDemo — E-Commerce Microservice Demo (.NET 8 · Clean Architecture · CQRS)
+# SkillGhcDemo — E-Commerce Microservice Demo (.NET 8 · Clean Architecture · CQRS)
 
 Demo solution of a microservice in **.NET 8** following **Clean Architecture** with **light DDD**, **CQRS (MediatR)**, **EF Core (Code First + Migrations)**, **FluentValidation**, and **Swagger**.
 
 Domain: **E-COMMERCE** — management of **Users** (customers), **Categories**, **Products**, **Prices** (per-product price history), and **Orders** with their **OrderItems** (lines with a price snapshot taken at purchase time).
 
-> This solution was **migrated** from a previous *Subscriptions* domain to *E-Commerce*, keeping the architecture, the patterns (Clean Architecture, CQRS/MediatR, EF Core, `Result<T>`, FluentValidation, Swagger), and the by-artifact-type test organization untouched.
+> This solution was **migrated** from a previous *Subscriptions* domain to *E-Commerce*, keeping the architecture and the patterns (Clean Architecture, CQRS/MediatR, EF Core, `Result<T>`, FluentValidation, Swagger) untouched.
 
 ---
 
 ## 1. Architecture and layers
 
 ```
-MicroDemo.sln
+SkillGhcDemo.sln
 ├── src/
-│   ├── MicroDemo.Domain          → Entities, enums, invariant rules. No external dependencies.
-│   ├── MicroDemo.Application      → Use cases (CQRS): Commands/Queries, Handlers,
+│   ├── SkillGhcDemo.Domain          → Entities, enums, invariant rules. No external dependencies.
+│   ├── SkillGhcDemo.Application      → Use cases (CQRS): Commands/Queries, Handlers,
 │   │                                Validators, DTOs, Result<T>, MediatR behaviors.
-│   ├── MicroDemo.Infrastructure   → EF Core: AppDbContext, configurations, migrations, DI.
-│   └── MicroDemo.Api              → ASP.NET Core Web API: controllers, middleware, Swagger.
+│   ├── SkillGhcDemo.Infrastructure   → EF Core: AppDbContext, configurations, migrations, DI.
+│   └── SkillGhcDemo.Api              → ASP.NET Core Web API: controllers, middleware, Swagger.
 ├── tests/
-│   └── MicroDemo.UnitTests        → xUnit + FluentAssertions + Moq (custom organization, see §6).
+│   └── SkillGhcDemo.UnitTests        → xUnit + FluentAssertions + Moq (custom organization, see §6).
 └── sql/
     ├── schema.sql                 → CREATE DATABASE + CREATE TABLE for the whole domain.
     └── seed.sql                   → INSERTs with realistic e-commerce sample data.
@@ -68,17 +68,17 @@ The Application layer does not know about Infrastructure — it depends only on 
 
 ## 3. Connection string
 
-Defined in `src/MicroDemo.Api/appsettings.json` → `ConnectionStrings:DefaultConnection`:
+Defined in `src/SkillGhcDemo.Api/appsettings.json` → `ConnectionStrings:DefaultConnection`:
 
 ```json
-"Server=(localdb)\\MSSQLLocalDB;Database=MicroDemoDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+"Server=(localdb)\\MSSQLLocalDB;Database=SkillGhcDemoDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 ```
 
 Adjust `Server=` to match your instance. To avoid committing secrets, prefer overriding via **User Secrets** or an environment variable:
 
 ```bash
 # Environment variable (Windows PowerShell)
-$env:ConnectionStrings__DefaultConnection = "Server=...;Database=MicroDemoDb;User Id=...;Password=...;TrustServerCertificate=True"
+$env:ConnectionStrings__DefaultConnection = "Server=...;Database=SkillGhcDemoDb;User Id=...;Password=...;TrustServerCertificate=True"
 ```
 
 ---
@@ -93,10 +93,10 @@ The database is created/updated by the migrations. In the **Development** enviro
 dotnet build
 
 # apply migrations manually (optional — the API already does this in Development)
-dotnet ef database update --project src/MicroDemo.Infrastructure --startup-project src/MicroDemo.Api
+dotnet ef database update --project src/SkillGhcDemo.Infrastructure --startup-project src/SkillGhcDemo.Api
 
 # run the API
-dotnet run --project src/MicroDemo.Api
+dotnet run --project src/SkillGhcDemo.Api
 ```
 
 Open the **Swagger UI** at: `https://localhost:<port>/swagger` (the port is printed in the console).
@@ -116,10 +116,10 @@ sqlcmd -S "(localdb)\MSSQLLocalDB" -i sql/seed.sql
 ### Handy migration commands
 ```bash
 # create a new migration
-dotnet ef migrations add <Name> --project src/MicroDemo.Infrastructure --startup-project src/MicroDemo.Api --output-dir Persistence/Migrations
+dotnet ef migrations add <Name> --project src/SkillGhcDemo.Infrastructure --startup-project src/SkillGhcDemo.Api --output-dir Persistence/Migrations
 
 # generate a SQL script from the migrations
-dotnet ef migrations script --project src/MicroDemo.Infrastructure --startup-project src/MicroDemo.Api
+dotnet ef migrations script --project src/SkillGhcDemo.Infrastructure --startup-project src/SkillGhcDemo.Api
 ```
 
 ---
@@ -172,18 +172,32 @@ Base: `/api`. All return JSON and use the `Result<T>` envelope mapped to HTTP st
 
 ---
 
-## 6. ⚠️ CUSTOM test organization (a particularity of this solution)
+## 6. Test organization (a particularity of this solution)
 
-Tests are **not** organized by class/feature (the conventional way would be `CreateProductCommandHandlerTests.cs`, `CreateProductCommandValidatorTests.cs`...). Instead, they are organized **by ARTIFACT TYPE**, one file per type:
+Tests live in `tests/SkillGhcDemo.UnitTests`, organized into folders **by ARTIFACT TYPE** (no per-entity subfolders):
 
-| File | Contains |
-|------|----------|
-| `RequestTests.cs`   | **Request builders** (`UserRequests`, `CategoryRequests`, `ProductRequests`, `PriceRequests`, `OrderRequests`) — the assembly of commands/queries used in tests, with valid/invalid variations. |
-| `ResponseTests.cs`  | **Expected response/DTO builders** and assertion helpers over `Result<T>` (`ResultAssertions`). |
-| `HandlerTests.cs`   | **All MediatR handler tests** (EF Core InMemory + Moq for `ILogger`). |
-| `ValidatorTests.cs` | **All validator tests** (FluentValidation `TestValidate`). |
+```
+tests/SkillGhcDemo.UnitTests/
+├── Commands/            → one <Command>Data class per command (test-data)
+├── Queries/             → one <Query>Data class per query (test-data)
+├── Handlers/
+│   ├── Commands/        → command-handler tests
+│   └── Queries/         → query-handler tests
+├── Validators/          → FluentValidation TestValidate tests
+├── Controllers/         → controller tests with a mocked ISender
+└── Common/              → TestDbContextFactory, TestLogger, ResultAssertions
+```
 
-**Why this way?** Centralizing requests and responses in their own files allows **reusing** them across `HandlerTests` and `ValidatorTests` without duplicating object assembly — there is a single place to tweak the "default valid data". The `RequestTests`/`ResponseTests` files keep the `Tests` suffix (and a handful of smoke tests) for naming consistency and so the builders are validated by the runner itself.
+| Folder | Contains |
+|--------|----------|
+| `Commands/` | One `<Command>Data` class per command (e.g. `CreateCategoryCommandData`) exposing reusable command instances — **valid, invalid, and edge-case** variants — via factory methods (`Valid()`, `WithEmptyName()`, `WithTooLongName()`...). |
+| `Queries/` | One `<Query>Data` class per query, same idea (`All()`, `OnlyActive()`, `ForId()`, `Unknown()`...). |
+| `Handlers/Commands/` · `Handlers/Queries/` | The MediatR handler tests, split into command and query handlers. Use EF Core InMemory (`TestDbContextFactory`) + `TestLogger` for `ILogger`. |
+| `Validators/` | All validator tests, using FluentValidation's `TestValidate`. |
+| `Controllers/` | Controller tests with a **mocked `ISender`** (via `IServiceProvider`), asserting the `IActionResult` mapping (`OkObjectResult`, `NotFoundObjectResult`, `CreatedAtActionResult`, `ConflictObjectResult`, `NoContentResult`...). |
+| `Common/` | Shared helpers: `TestDbContextFactory` (InMemory context), `TestLogger` (no-op `ILogger<T>`), `ResultAssertions` (`ShouldBeSuccess` / `ShouldBeFailureOfType`). |
+
+**Why the `Commands/`/`Queries/` data classes?** Centralizing the command/query instances there lets the handler, validator, and controller tests **reuse** them without duplicating object assembly — there is a single place to tweak the "default valid data" and its variants.
 
 Run the tests:
 ```bash
@@ -195,7 +209,7 @@ dotnet test
 ## 7. ★ Endpoint reserved for manual implementation
 
 **`POST /api/orders`** → `CreateOrderCommandHandler`
-(`src/MicroDemo.Application/Features/Orders/Commands/CreateOrder/`)
+(command in `src/SkillGhcDemo.Application/Commands/Orders/`, handler in `src/SkillGhcDemo.Application/Handlers/Commands/Orders/`)
 
 The **handler is deliberately left as a stub** (`throw new NotImplementedException(...)`), awaiting manual implementation with your custom skill. **Already in place**: the `Command` (with multiple `CreateOrderItem`s), the `Validator` (shape validation), the endpoint in `OrdersController`, and the read query `GET /api/orders/{id}`.
 
@@ -237,7 +251,7 @@ Decisions I took without confirmation during the **migration to e-commerce** —
 ## 9. Current status
 
 - ✅ Solution build: **success** (0 warnings, 0 errors)
-- ✅ Tests: **41/41 passing**
+- ✅ Tests: **115/115 passing**
 - ✅ `InitialCreate` migration (e-commerce) generated
 - ✅ `schema.sql` / `seed.sql` updated with e-commerce sample data
 - ⏳ `POST /api/orders` (handler): **stub awaiting manual implementation**
