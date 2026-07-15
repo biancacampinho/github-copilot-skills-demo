@@ -1,4 +1,37 @@
-# SkillGhcDemo: E-Commerce Microservice Demo (.NET 8 · Clean Architecture · CQRS)
+# Workshop Sviluppo AI - Sessione 8 - Boost Productivity with GitHub Copilot: Custom Skills in Action
+In this session we'll go beyond the basics of GitHub Copilot to explore how Custom Skills can turn it into a tailored assistant for your development workflow.
+Theory:
+
+-What a skill is
+-Why build one
+-How it's structured
+-Best practices
+
+Demo:
+On a real solution, we'll showcase 3 custom skills that analyze a microservice, generate an API, and create the related unit tests.
+Who it's for: developers already using GitHub Copilot who want to take their productivity to the next level by leveraging AI in a targeted, non-generic way.
+Format: hands-on session combining theory with live demos directly in the GitHub Copilot CLI.
+
+## Custom Skills
+
+Le skill utilizzate in questo repo sono state create a partire da un template riutilizzabile disponibile in [`templates/skills-template`](./templates/skills-template), pensato per standardizzare la struttura e velocizzare la creazione di nuove skill personalizzate per GitHub Copilot.
+
+Per la demo sono state sviluppate 3 skill, pensate per lavorare in sequenza su un microservizio:
+
+###  `my-research`
+Analizza il codebase del microservizio e produce un documento di ricerca che ne descrive l'architettura, le convenzioni utilizzate e i pattern principali. Il documento generato funge da contesto per le skill successive.
+
+###  `my-unit-tests`
+Aggiunge unit test seguendo le convenzioni di testing già presenti nel repo. Misura la coverage del codice e **non modifica mai i file in `src/`**, garantendo che venga toccato solo il livello di test.
+
+###  `my-api-implementation`
+Crea un nuovo endpoint end-to-end, seguendo i pattern architetturali descritti nel documento di contesto generato da `my-research`. Il risultato è coerente con le convenzioni già in uso nel microservizio.
+
+---
+
+**Come funzionano insieme:** `my-research` genera il contesto → `my-api-implementation` lo usa per creare il nuovo endpoint rispettando i pattern esistenti → `my-unit-tests` copre il nuovo codice con test adeguati, senza intaccare la logica applicativa.
+
+## Solution to apply the skill -> SkillGhcDemo: E-Commerce Microservice Demo (.NET 8 · Clean Architecture · CQRS)
 
 Demo solution of a microservice in **.NET 8** following **Clean Architecture** with **light DDD**, **CQRS (MediatR)**, **EF Core (Code First + Migrations)**, **FluentValidation**, and **Swagger**.
 
