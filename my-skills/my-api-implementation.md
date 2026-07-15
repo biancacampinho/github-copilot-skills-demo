@@ -41,6 +41,8 @@ Use **Claude Sonnet** (or an equivalent strong coding model) to execute this ski
 - No files are created under `tests/` by this skill — that is delegated entirely to `my-unit-tests` in the final step.
 
 ### OPEN QUESTIONS
+- **MANDATORY: if the user does not explicitly give a piece of data needed to implement the endpoint, you MUST ask them for it via the Open Questions block — NEVER invent/guess it.** This includes, but is not limited to: the HTTP route/path, the HTTP verb, filter/input parameter names and types, and the response shape.
+- In particular, **if the user does not provide the API route**, you MUST ask them for it explicitly before implementing the controller action — do not silently invent a route by convention.
 - If the requested behavior is ambiguous (e.g. unclear filter semantics, unclear whether it's a query or a command, unclear response shape), or a needed DTO/pattern genuinely doesn't exist yet, ask the user before proceeding rather than guessing.
 - If implementing the feature seems to require a new package, DI change, or cross-cutting behavior, stop and ask the user instead of adding it silently.
 
@@ -66,6 +68,7 @@ Open Questions:
 ### Step 2 — UNDERSTAND the brief
 - Parse the user's brief into: the target feature/entity (e.g. Orders), the operation type (query vs. command), the filter/input parameters (e.g. `productId`), and the expected shape of the response (e.g. a list of orders).
 - Identify the closest existing analogous implementation in the codebase (e.g. a query that already filters a list by an id/foreign key, such as `GetProductsQuery`'s `CategoryId` filter) to use as the concrete template for naming and structure.
+- **If the user did not explicitly provide the API route (path)** for the new endpoint, do NOT invent one — stop and ask the user for it via the Open Questions block before proceeding to Step 4. The same applies to any other required input the user did not specify (HTTP verb, parameter names/types, response shape): ask, don't guess.
 
 ### Step 3 — LOCATE the target feature's existing files
 - Read the existing files for the target feature across all layers: `Queries/<Feature>/`, `Commands/<Feature>/`, `Handlers/Queries|Commands/<Feature>/`, `Dtos/<X>Dto.cs`, `Api/Controllers/<Feature>Controller.cs`, and the relevant `Domain/Entities` class.
@@ -89,10 +92,18 @@ In this order:
 
 ### Step 7 — REPORT (final summary)
 At the end, present:
-1. **Files created/edited** — one line per file, in plain language (e.g. `Created Queries/Orders/GetOrdersByProductIdQuery.cs`).
+1. **Files created/edited** — a nicely formatted Markdown table (with an emoji/color-coded status column, e.g. 🟢 Created / 🟡 Edited) listing every file touched, one row per file, with its layer/folder. Example:
+
+   | Status | File |
+   |---|---|
+   | 🟢 Created | `Queries/Orders/GetOrdersByProductIdQuery.cs` |
+   | 🟢 Created | `Handlers/Queries/Orders/GetOrdersByProductIdQueryHandler.cs` |
+   | 🟡 Edited | `Api/Controllers/OrdersController.cs` |
+
+   Always present this as a table, never as a plain bullet list.
 2. **Endpoint added** — the route and HTTP verb (e.g. `GET /api/orders?productId={id}`).
 3. **Build result** — confirm the solution builds cleanly.
-4. **my-unit-tests summary** — pass through the summary produced by the `my-unit-tests` run (files/tests added, pass/fail count, coverage %).
+4. **my-unit-tests summary** — pass through the summary produced by the `my-unit-tests` run (files/tests added, pass/fail count, per-project coverage table).
 
 ---
 
@@ -104,3 +115,4 @@ At the end, present:
 - **Tests are out of scope here.** This skill never writes test code directly — it always finishes by invoking `my-unit-tests` for the files it created or changed.
 - **Build before handoff.** The solution must compile before `my-unit-tests` is run.
 - **Stay in scope.** Touch only the files needed for the requested endpoint; do not refactor or "improve" unrelated features along the way.
+- **Never guess missing data.** If the user does not explicitly provide a required piece of information (route/path, HTTP verb, parameter names/types, response shape, etc.), you MUST ask for it via the Open Questions block instead of assuming a default — this applies especially to the API route.

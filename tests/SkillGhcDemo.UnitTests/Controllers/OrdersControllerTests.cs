@@ -54,6 +54,32 @@ public class OrdersControllerTests
     }
 
     [Fact]
+    public async Task GetByProductId_returns_ok_with_the_lines()
+    {
+        var (controller, mediator) = CreateController();
+        var productId = Guid.NewGuid();
+        var lines = new List<OrderByProductDto> { new() { OrderId = Guid.NewGuid() } };
+        mediator.Setup(m => m.Send(It.IsAny<GetOrdersByProductIdQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<IReadOnlyList<OrderByProductDto>>.Success(lines));
+
+        var response = await controller.GetByProductId(productId);
+
+        response.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(lines);
+    }
+
+    [Fact]
+    public async Task GetByProductId_returns_notfound_when_product_does_not_exist()
+    {
+        var (controller, mediator) = CreateController();
+        mediator.Setup(m => m.Send(It.IsAny<GetOrdersByProductIdQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<IReadOnlyList<OrderByProductDto>>.NotFound("not found"));
+
+        var response = await controller.GetByProductId(Guid.NewGuid());
+
+        response.Should().BeOfType<NotFoundObjectResult>();
+    }
+
+    [Fact]
     public async Task Create_returns_created_on_success()
     {
         var (controller, mediator) = CreateController();

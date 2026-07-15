@@ -16,6 +16,16 @@ public class OrdersController : ApiControllerBase
         => ToResponse(await Mediator.Send(new GetOrderByIdQuery(id)));
 
     /// <summary>
+    /// Lists the order lines for a given product (one entry per order line), including
+    /// the order data, the buying user and the product details.
+    /// </summary>
+    [HttpGet("by-product/{productId:guid}")]
+    [ProducesResponseType(typeof(IReadOnlyList<OrderByProductDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetByProductId(Guid productId)
+        => ToResponse(await Mediator.Send(new GetOrdersByProductIdQuery(productId)));
+
+    /// <summary>
     /// ★ ENDPOINT RESERVED FOR MANUAL IMPLEMENTATION (custom skill) ★
     /// Creates an order for a user, with multiple items, taking a snapshot
     /// of the current price of each product and computing the total.
