@@ -81,7 +81,10 @@ Use **Claude Sonnet** to execute this skill.
 - Build and run the tests **with coverage collection** (the project already references `coverlet.collector`):
   `dotnet test tests/SkillGhcDemo.UnitTests --collect:"XPlat Code Coverage"`
 - If a test fails only because `src/` would need to change, STOP and raise it as an open question — do not modify `src/`.
-- Read the generated coverage report (e.g. the `coverage.cobertura.xml` produced under `TestResults/`) and extract the **total line-coverage percentage** for the solution. Keep this value for the final summary.
+- Read the generated coverage report (e.g. the `coverage.cobertura.xml` produced under `TestResults/`) and extract:
+  - the **total line-coverage percentage** for the solution, and
+  - the **line-coverage percentage per project/package** (`SkillGhcDemo.Domain`, `SkillGhcDemo.Application`, `SkillGhcDemo.Infrastructure`, `SkillGhcDemo.Api`), from the `<package>` elements of the cobertura report.
+- Keep both the overall value and the per-project breakdown for the final summary.
 
 ### Step 6 — OPEN QUESTIONS
 - If the requested behavior is ambiguous, or coverage seems to require touching `src/`, or a needed builder/helper shape is unclear, ask the user before proceeding rather than guessing or crossing into `src/`.
@@ -96,7 +99,16 @@ At the end, always present a summary with these parts:
    - Added a WithZeroStock() variant in Commands/CreateProductCommandData.cs
    ```
 2. **Test run result** — total tests passed / failed.
-3. **Total test coverage** — the overall coverage measured in Step 5, reported **as a percentage** (e.g. `Total test coverage: 78%`).
+3. **Total test coverage** — the overall coverage measured in Step 5, reported **as a percentage** (e.g. `Total test coverage: 78%`), **plus a per-project coverage table** with one row per project, e.g.:
+
+   | Project | Line coverage |
+   |---|---|
+   | SkillGhcDemo.Domain | 100% |
+   | SkillGhcDemo.Application | 90% |
+   | SkillGhcDemo.Api | 55% |
+   | SkillGhcDemo.Infrastructure | 9% |
+
+   Always include this table in the final summary, not just the overall percentage.
 4. **`src/` confirmation** — confirm explicitly that no file under `src/` was created or modified.
 5. **Low-coverage follow-up** — if the total coverage is **below 80%**, tell the user that coverage is under the 80% target, list the files/areas with the lowest coverage, and **ask the user whether they want unit tests written for those additional low-coverage files** (which would extend the scope beyond the added/edited files). Do not write those extra tests without the user's confirmation.
 
