@@ -15,6 +15,12 @@ public class OrdersController : ApiControllerBase
     public async Task<IActionResult> GetById(Guid id)
         => ToResponse(await Mediator.Send(new GetOrderByIdQuery(id)));
 
+    /// <summary>Lists the orders that contain the given product, with full user and product details.</summary>
+    [HttpGet("product/{productId:guid}")]
+    [ProducesResponseType(typeof(IReadOnlyList<OrderWithDetailsDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByProductId(Guid productId)
+        => ToResponse(await Mediator.Send(new GetOrdersByProductIdQuery(productId)));
+
     /// <summary>
     /// Creates an order for a user, with multiple items, taking a snapshot
     /// of the current price of each product and computing the total.

@@ -54,6 +54,32 @@ public class OrdersControllerTests
     }
 
     [Fact]
+    public async Task GetByProductId_returns_ok_with_the_orders()
+    {
+        var (controller, mediator) = CreateController();
+        var dtos = new List<OrderWithDetailsDto> { new() { Id = Guid.NewGuid() } };
+        var productId = Guid.NewGuid();
+        mediator.Setup(m => m.Send(It.IsAny<GetOrdersByProductIdQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<IReadOnlyList<OrderWithDetailsDto>>.Success(dtos));
+
+        var response = await controller.GetByProductId(productId);
+
+        response.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(dtos);
+    }
+
+    [Fact]
+    public async Task GetByProductId_returns_ok_with_empty_list_when_no_orders_match()
+    {
+        var (controller, mediator) = CreateController();
+        mediator.Setup(m => m.Send(It.IsAny<GetOrdersByProductIdQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<IReadOnlyList<OrderWithDetailsDto>>.Success(new List<OrderWithDetailsDto>()));
+
+        var response = await controller.GetByProductId(Guid.NewGuid());
+
+        response.Should().BeOfType<OkObjectResult>().Which.Value.As<IReadOnlyList<OrderWithDetailsDto>>().Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task Create_returns_created_on_success()
     {
         var (controller, mediator) = CreateController();
