@@ -16,11 +16,8 @@ public class OrdersController : ApiControllerBase
         => ToResponse(await Mediator.Send(new GetOrderByIdQuery(id)));
 
     /// <summary>
-    /// ★ ENDPOINT RESERVED FOR MANUAL IMPLEMENTATION (custom skill) ★
     /// Creates an order for a user, with multiple items, taking a snapshot
     /// of the current price of each product and computing the total.
-    /// The endpoint and the pipeline are already in place; the handler
-    /// (CreateOrderCommandHandler) is a stub awaiting implementation.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]

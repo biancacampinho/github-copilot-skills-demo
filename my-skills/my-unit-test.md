@@ -93,20 +93,21 @@ Use **Claude Sonnet** to execute this skill.
 At the end, always present a summary with these parts:
 
 1. **Files created / edited** — list every test file you created or modified, saying what happened to each and how many tests were added, in plain language. Example:
-   ```
-   - Created Handlers/Commands/UpdateProductCommandHandlerTests.cs (3 tests)
-   - Updated Validators/CreateProductCommandValidatorTests.cs and added 2 tests
-   - Added a WithZeroStock() variant in Commands/CreateProductCommandData.cs
-   ```
+Created Handlers/Commands/UpdateProductCommandHandlerTests.cs (3 tests)
+Updated Validators/CreateProductCommandValidatorTests.cs and added 2 tests
+Added a WithZeroStock() variant in Commands/CreateProductCommandData.cs
 2. **Test run result** — total tests passed / failed.
-3. **Total test coverage** — the overall coverage measured in Step 5, reported **as a percentage** (e.g. `Total test coverage: 78%`), **plus a per-project coverage table** with one row per project, e.g.:
+3. **Total test coverage** — the overall coverage measured in Step 5, reported **as a percentage** (e.g. `Total test coverage: 78%`), **plus a per-project coverage table** with one row per project, marking each row with a coverage indicator: 🟢 for ≥80%, 🟡 for 50–79%, 🔴 for <50%. Use this exact format:
 
-   | Project | Line coverage |
-   |---|---|
-   | SkillGhcDemo.Domain | 100% |
-   | SkillGhcDemo.Application | 90% |
-   | SkillGhcDemo.Api | 55% |
-   | SkillGhcDemo.Infrastructure | 9% |
+   | Coverage | Project | Line coverage |
+   |---|---|---|
+   | 🟢 | SkillGhcDemo.Domain | 100% |
+   | 🟢 | SkillGhcDemo.Application | 90% |
+   | 🟡 | SkillGhcDemo.Api | 55% |
+   | 🔴 | SkillGhcDemo.Infrastructure | 9% |
+   | — | **Total** | **48.7%** |
+
+   Legend: 🟢 ≥80% &nbsp; 🟡 50–79% &nbsp; 🔴 <50%
 
    Always include this table in the final summary, not just the overall percentage.
 4. **`src/` confirmation** — confirm explicitly that no file under `src/` was created or modified.

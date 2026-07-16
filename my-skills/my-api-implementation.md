@@ -37,7 +37,20 @@ Use **Claude Sonnet** (or an equivalent strong coding model) to execute this ski
 - **No premature abstraction.** Don't introduce generic/base classes, extra layers, or new packages to "future-proof" the endpoint unless the existing codebase already does this for similar features.
 
 ### OUTPUT
+- Always provide the new API route created as part of the implementation. Example: `GET /pippo/pluto?id={id}`
 - New/changed files live under `src/SkillGhcDemo.Application/{Queries,Commands,Handlers,Dtos}/...` and `src/SkillGhcDemo.Api/Controllers/...`, following the folder-per-feature layout described above.
+- Always summarize the affected files in a table, marking each row with 🟢 for newly created files and 🟡 for edited/modified files, plus a short "Details" note describing what was added or changed. Use this exact format:
+
+  | Status | File | Details |
+  |--------|------|---------|
+  | 🟢 Created | `src/SkillGhcDemo.Application/Queries/GetPippoQuery.cs` | record `GetPippoQuery(Guid Id)` |
+  | 🟢 Created | `src/SkillGhcDemo.Application/Handlers/GetPippoQueryHandler.cs` | filters + includes logic |
+  | 🟡 Edited | `src/SkillGhcDemo.Application/Dtos/PippoDto.cs` | added `PippoWithDetailsDto` mapping |
+  | 🟡 Edited | `src/SkillGhcDemo.Api/Controllers/PippoController.cs` | added `GET /pippo?id={id}` action |
+  | 🟢 Created | `tests/.../GetPippoQueryData.cs` | test data factory |
+  | 🟢 Created | `tests/.../GetPippoQueryHandlerTests.cs` | 2 tests |
+  | 🟡 Edited | `tests/.../PippoControllerTests.cs` | +1 test |
+
 - No files are created under `tests/` by this skill — that is delegated entirely to `my-unit-tests` in the final step.
 
 ### OPEN QUESTIONS
